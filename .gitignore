@@ -425,4 +425,6 @@ FodyWeavers.xsd
 
 *.dgml
 
+.idea/
+
 # End of https://www.toptal.com/developers/gitignore/api/windows,visualstudio
