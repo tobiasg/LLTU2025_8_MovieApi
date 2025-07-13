@@ -10,7 +10,6 @@ namespace Movies.Core.Entities;
 
 public class Movie : EntityBase
 {
-    [Required]
     public string Title { get; set; } = string.Empty;
     public int Year { get; set; }
     public int Duration { get; set; }
