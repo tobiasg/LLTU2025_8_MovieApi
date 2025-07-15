@@ -1,12 +1,13 @@
 using Movies.Api.Extensions;
 using Movies.Data;
+using Movies.Presentation;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.ConfigureDatabase(builder.Configuration);
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddApplicationPart(typeof(PresentationAssemblyReference).Assembly);
 builder.Services.AddAutoMapper(c => c.AddProfile<MapperProfile>());
 builder.Services.AddOpenApi();
 
