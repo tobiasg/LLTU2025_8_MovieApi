@@ -1,4 +1,5 @@
 using Movies.Api.Extensions;
+using Movies.Data;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -6,6 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.ConfigureDatabase(builder.Configuration);
 
 builder.Services.AddControllers();
+builder.Services.AddAutoMapper(c => c.AddProfile<MapperProfile>());
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
