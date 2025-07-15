@@ -8,6 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.ConfigureDatabase(builder.Configuration);
 
 builder.Services.AddControllers().AddApplicationPart(typeof(PresentationAssemblyReference).Assembly);
+builder.Services.AddRepositories();
+builder.Services.AddServices();
 builder.Services.AddAutoMapper(c => c.AddProfile<MapperProfile>());
 builder.Services.AddOpenApi();
 

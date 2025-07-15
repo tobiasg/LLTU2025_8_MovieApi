@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Movies.Core;
 
-public interface IMovieRepository
+public interface IMovieRepository : IRepositoryBase<Movie>
 {
     Task<List<Movie>> GetMoviesAsync(bool trackChanges = false);
     Task<Movie?> GetMovieAsync(Guid id, bool trackChanges = false);

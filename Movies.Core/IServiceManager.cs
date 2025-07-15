@@ -1,6 +1,6 @@
 ﻿namespace Movies.Core;
 
-public interface ISeviceManager
+public interface IServiceManager
 {
     IMovieService MovieService { get; }
 }

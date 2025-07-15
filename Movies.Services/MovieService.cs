@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Movies.Core;
 using Movies.Core.Dto;
+using Movies.Core.Entities;
 
 namespace Movies.Services;
 
@@ -19,21 +20,35 @@ public class MovieService(ITransactionManager transactionManager, IMapper mapper
 
     public async Task<MovieDetailsDto> GetMovieDetailsAsync(Guid id, bool trackChanges = false)
     {
-        throw new NotImplementedException();
+        var movie = await transactionManager.MovieRepository.GetMovieAsync(id, trackChanges);
+        return movie == null ? null! : mapper.Map<MovieDetailsDto>(movie);
     }
 
-    public Task<MovieDto> CreateMovieAsync(CreateMovieDto createMovieDto)
+    public async Task<MovieDto> CreateMovieAsync(CreateMovieDto createMovieDto)
     {
-        throw new NotImplementedException();
+        var movie = mapper.Map<Movie>(createMovieDto);
+        
+        transactionManager.MovieRepository.Create(movie);
+
+        await transactionManager.CompleteAsync();
+
+        return mapper.Map<MovieDto>(movie);
     }
 
-    public Task UpdateMovieAsync(UpdateMovieDto updateMovieDto)
+    public async Task UpdateMovieAsync(Guid id, UpdateMovieDto updateMovieDto)
     {
-        throw new NotImplementedException();
+        var movie = await transactionManager.MovieRepository.GetMovieAsync(id, trackChanges: true);
+        mapper.Map(updateMovieDto, movie);
+        await transactionManager.CompleteAsync();
     }
 
-    public Task DeleteMovieAsync(Guid id)
+    public async Task DeleteMovieAsync(Guid id)
     {
-        throw new NotImplementedException();
+        var movie = await transactionManager.MovieRepository.GetMovieAsync(id);
+        if (movie != null)
+        {
+            transactionManager.MovieRepository.Delete(movie);
+            await transactionManager.CompleteAsync();
+        }
     }
 }
