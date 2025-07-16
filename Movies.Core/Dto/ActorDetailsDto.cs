@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace Movies.Core.Dto;
 
-public record ActorDetailsDto(
-    Guid Id,
-    string Name,
-    DateTime? BirtDate,
-    List<MovieDto> Movies
-);
+public record ActorDetailsDto
+{
+    public Guid Id { get; init; }
+    public string Name { get; init; }
+    public DateTime? BirhtDate { get; init; }
+    public List<MovieDto> Movies { get; init; } = new();
+};

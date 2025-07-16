@@ -17,8 +17,10 @@ public static class ServiceExtensions
     {
         services.AddScoped<IMovieRepository, MovieRepository>();
         services.AddScoped<IReviewRepository, ReviewRepository>();
+        services.AddScoped<IActorRepository, ActorRepository>();
         services.AddScoped(provider => new Lazy<IMovieRepository>(provider.GetRequiredService<IMovieRepository>));
         services.AddScoped(provider => new Lazy<IReviewRepository>(provider.GetRequiredService<IReviewRepository>));
+        services.AddScoped(provider => new Lazy<IActorRepository>(provider.GetRequiredService<IActorRepository>));
     }
 
     public static void AddServices(this IServiceCollection services)
@@ -27,8 +29,10 @@ public static class ServiceExtensions
         services.AddScoped<IServiceManager, ServiceManager>();
         services.AddScoped<IMovieService, MovieService>();
         services.AddScoped<IReviewService, ReviewService>();
+        services.AddScoped<IActorService, ActorService>();
         services.AddScoped(provider => new Lazy<IMovieService>(provider.GetRequiredService<IMovieService>));
         services.AddScoped(provider => new Lazy<IReviewService>(provider.GetRequiredService<IReviewService>));
+        services.AddScoped(provider => new Lazy<IActorService>(provider.GetRequiredService<IActorService>));
 
     }
 }

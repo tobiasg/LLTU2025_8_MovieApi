@@ -1,5 +1,7 @@
 ﻿using Movies.Core.Dto;
 
+namespace Movies.Core;
+
 public interface IReviewService
 {
     Task<IEnumerable<ReviewDto>> GetReviewsAsync(Guid movieId, bool trackChanges = false);

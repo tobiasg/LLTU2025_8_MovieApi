@@ -3,6 +3,8 @@ using Movies.Core;
 using Movies.Core.Dto;
 using Movies.Core.Entities;
 
+namespace Movies.Services;
+
 public class ReviewService(ITransactionManager transactionManager, IMapper mapper) : IReviewService
 {
     public async Task<IEnumerable<ReviewDto>> GetReviewsAsync(Guid movieId, bool trackChanges = false)

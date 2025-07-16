@@ -32,6 +32,9 @@ public class MapperProfile : Profile
         CreateMap<Actor, ActorDto>();
         CreateMap<ActorDto, Actor>();
 
+        CreateMap<Actor, ActorDetailsDto>();
+        CreateMap<ActorDetailsDto, Actor>();
+
         CreateMap<CreateMovieDto, Movie>();
         CreateMap<UpdateMovieDto, Movie>();
 
