@@ -34,5 +34,8 @@ public class MapperProfile : Profile
 
         CreateMap<CreateMovieDto, Movie>();
         CreateMap<UpdateMovieDto, Movie>();
+
+        CreateMap<CreateReviewDto, Review>();
+        CreateMap<UpdateReviewDto, Review>();
     }
 }

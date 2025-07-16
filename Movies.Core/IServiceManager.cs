@@ -3,4 +3,5 @@
 public interface IServiceManager
 {
     IMovieService MovieService { get; }
+    IReviewService ReviewService { get; }
 }

@@ -33,7 +33,7 @@ public class MoviesController(IServiceManager serviceManager) : ControllerBase
         return NoContent(); 
     }
 
-    [HttpDelete]
+    [HttpDelete("/movies/{id}")]
     public async Task<ActionResult> DeleteMovie(Guid id)
     {
         await serviceManager.MovieService.DeleteMovieAsync(id);
