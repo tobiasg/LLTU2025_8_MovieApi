@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Movies.Core;
 using Movies.Core.Dto;
+using Movies.Core.Exceptions;
 
 namespace Movies.Services;
 
@@ -18,7 +19,7 @@ public class ActorService(ITransactionManager transactionManager, IMapper mapper
     public async Task<ActorDetailsDto> GetActorAsync(Guid id, bool trackChanges = false)
     {
         var actor = await transactionManager.ActorRepository.GetActorAsync(id, trackChanges);
-        return actor == null ? null! : mapper.Map<ActorDetailsDto>(actor);
+        return actor == null ? throw new ActorNotFoundException(id) : mapper.Map<ActorDetailsDto>(actor);
     }
 
     public async Task<ActorDetailsDto> AddActorToMovie(Guid movieId, Guid actorId, bool trackChanges = false)
@@ -35,7 +36,5 @@ public class ActorService(ITransactionManager transactionManager, IMapper mapper
             mapper.Map<IEnumerable<ActorDto>>(items),
             new PagingMeta(totalItems, pagingOptions.Page, pagingOptions.Size)
         );
-
-        //return mapper.Map<IEnumerable<ActorDto>>();
     }
 }

@@ -2,6 +2,7 @@
 using Movies.Core;
 using Movies.Core.Dto;
 using Movies.Core.Entities;
+using Movies.Core.Exceptions;
 
 namespace Movies.Services;
 
@@ -19,19 +20,19 @@ public class MovieService(ITransactionManager transactionManager, IMapper mapper
     public async Task<MovieDto> GetMovieAsync(Guid id, bool trackChanges = false)
     {
         var movie = await transactionManager.MovieRepository.GetMovieAsync(id, trackChanges);
-        return movie == null ? null! : mapper.Map<MovieDto>(movie);
+        return movie == null ? throw new MovieNotFoundException(id) : mapper.Map<MovieDto>(movie);
     }
 
     public async Task<MovieDetailsDto> GetMovieDetailsAsync(Guid id, bool trackChanges = false)
     {
         var movie = await transactionManager.MovieRepository.GetMovieAsync(id, trackChanges);
-        return movie == null ? null! : mapper.Map<MovieDetailsDto>(movie);
+        return movie == null ? throw new MovieNotFoundException(id) : mapper.Map<MovieDetailsDto>(movie);
     }
 
     public async Task<MovieDetailsDto> GetTopRatedMovieAsync(bool trackChanges = false)
     {
         var movie = await transactionManager.MovieRepository.GetTopRatedMovieAsync();
-        return movie == null ? null! : mapper.Map<MovieDetailsDto>(movie);
+        return movie == null ? throw new MovieNotFoundException() : mapper.Map<MovieDetailsDto>(movie);
     }
 
     public async Task<MovieDto> CreateMovieAsync(CreateMovieDto createMovieDto)
