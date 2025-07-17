@@ -12,5 +12,5 @@ public class ReportsController(IServiceManager serviceManager) : ControllerBase
     public async Task<ActionResult<MovieDetailsDto>> GetTopRatedMovie() => Ok(await serviceManager.MovieService.GetTopRatedMovieAsync());
 
     [HttpGet("actors/most-active")]
-    public async Task<ActionResult<IEnumerable<ActorDto>>> GetMostActiveActors() => Ok(await serviceManager.ActorService.GetMostActiveActorsAsync());
+    public async Task<ActionResult<PagedResponse<ActorDto>>> GetMostActiveActors([FromQuery] PagingOptions pagingOptions) => Ok(await serviceManager.ActorService.GetMostActiveActorsAsync(pagingOptions));
 }

@@ -6,9 +6,14 @@ namespace Movies.Data.Repositories;
 
 public class ActorRepository(ApplicationContext context) : BaseRepository<Actor>(context), IActorRepository
 {
-    public async Task<List<Actor>> GetActorsAsync(bool trackChanges = false)
+    public async Task<(List<Actor>, int totalItems)> GetActorsAsync(PagingOptions pagingOptions, bool trackChanges = false)
     {
-        return await FindAll(trackChanges).ToListAsync();
+        var query = FindAll(trackChanges);
+
+        return (
+            await query.Skip((pagingOptions.Page - 1) * pagingOptions.Size).Take(pagingOptions.Size).ToListAsync(),
+            await query.CountAsync()
+        );
     }
 
     public async Task<Actor?> GetActorAsync(Guid id, bool trackChanges = false)
@@ -38,13 +43,17 @@ public class ActorRepository(ApplicationContext context) : BaseRepository<Actor>
         return actor;
     }
 
-    public async Task<List<Actor>> GetMostActiveActorsAsync(bool trackChanges = false)
+    public async Task<(List<Actor>, int totalItems)> GetMostActiveActorsAsync(PagingOptions pagingOptions, bool trackChanges = false)
     {
-        return await context.Movies
+        var query = context.Movies
             .SelectMany(movie => movie.Actors)
             .GroupBy(actor => actor.Id)
             .OrderByDescending(group => group.Count())
-            .Take(10).Select(group => group.First())
-            .ToListAsync();
+            .Select(group => group.First());
+
+        return (
+            await query.Skip((pagingOptions.Page - 1) * pagingOptions.Size).Take(pagingOptions.Size).ToListAsync(),
+            await query.CountAsync()
+        );
     }
 }

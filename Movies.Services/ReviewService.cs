@@ -7,9 +7,13 @@ namespace Movies.Services;
 
 public class ReviewService(ITransactionManager transactionManager, IMapper mapper) : IReviewService
 {
-    public async Task<IEnumerable<ReviewDto>> GetReviewsAsync(Guid movieId, bool trackChanges = false)
+    public async Task<PagedResponse<ReviewDto>> GetReviewsAsync(PagingOptions pagingOptions, Guid movieId, bool trackChanges = false)
     {
-        return mapper.Map<IEnumerable<ReviewDto>>(await transactionManager.ReviewRepository.GetReviewsAsync(movieId, trackChanges));
+        var (items, totalItems) = await transactionManager.ReviewRepository.GetReviewsAsync(pagingOptions, movieId, trackChanges);
+        return new PagedResponse<ReviewDto>(
+            mapper.Map<IEnumerable<ReviewDto>>(items),
+            new PagingMeta(totalItems, pagingOptions.Page, pagingOptions.Size)
+        );
     }
 
     public async Task<ReviewDto> CreateReviewAsync(Guid movieId, CreateReviewDto createReviewDto)

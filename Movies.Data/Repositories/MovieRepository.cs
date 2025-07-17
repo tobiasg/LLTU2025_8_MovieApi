@@ -11,12 +11,14 @@ namespace Movies.Data.Repositories;
 
 public class MovieRepository(ApplicationContext context) : BaseRepository<Movie>(context), IMovieRepository
 {
-    public async Task<List<Movie>> GetMoviesAsync(bool trackChanges = false)
+    public async Task<(List<Movie>, int totalItems)> GetMoviesAsync(PagingOptions pagingOptions, bool trackChanges = false)
     {
-        return await FindAll(trackChanges)
-            .Include(movie => movie.Genres)
-            .Include(movie => movie.Reviews)
-            .ToListAsync();
+        var query = FindAll(trackChanges).Include(movie => movie.Genres).Include(movie => movie.Reviews);
+
+        return (
+            await query.Skip((pagingOptions.Page -1) * pagingOptions.Size).Take(pagingOptions.Size).ToListAsync(), 
+            await query.CountAsync()
+        );
     }
 
     public async Task<Movie?> GetMovieAsync(Guid id, bool trackChanges = false)

@@ -11,8 +11,7 @@ namespace Movies.Presentation.Controllers;
 public class ReviewsController(IServiceManager serviceManager) : ControllerBase
 {
     [HttpGet("/movies/{movieId:guid}/reviews")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<ReviewDto>))]
-    public async Task<ActionResult<IEnumerable<ReviewDto>>> GetReviews(Guid movieId) => Ok(await serviceManager.ReviewService.GetReviewsAsync(movieId));
+    public async Task<ActionResult<PagedResponse<ReviewDto>>> GetReviews([FromQuery] PagingOptions pagingOptions, Guid movieId) => Ok(await serviceManager.ReviewService.GetReviewsAsync(pagingOptions, movieId));
 
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<ReviewDto>> GetReview(Guid id) => Ok(await serviceManager.MovieService.GetMovieAsync(id));

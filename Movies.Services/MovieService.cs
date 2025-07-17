@@ -7,9 +7,13 @@ namespace Movies.Services;
 
 public class MovieService(ITransactionManager transactionManager, IMapper mapper) : IMovieService
 {
-    public async Task<IEnumerable<MovieDto>> GetMoviesAsync(bool trackChanges = false)
+    public async Task<PagedResponse<MovieDto>> GetMoviesAsync(PagingOptions pagingOptions, bool trackChanges = false)
     {
-        return mapper.Map<IEnumerable<MovieDto>>(await transactionManager.MovieRepository.GetMoviesAsync(trackChanges));
+        var (items, totalItems) = await transactionManager.MovieRepository.GetMoviesAsync(pagingOptions, trackChanges);
+        return new PagedResponse<MovieDto>(
+            mapper.Map<IEnumerable<MovieDto>>(items),
+            new PagingMeta(totalItems, pagingOptions.Page, pagingOptions.Size)
+        );
     }
 
     public async Task<MovieDto> GetMovieAsync(Guid id, bool trackChanges = false)

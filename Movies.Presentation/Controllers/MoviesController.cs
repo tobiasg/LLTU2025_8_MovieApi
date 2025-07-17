@@ -10,7 +10,7 @@ namespace Movies.Presentation.Controllers;
 public class MoviesController(IServiceManager serviceManager) : ControllerBase
 {
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<MovieDto>>> GetMovies() => Ok(await serviceManager.MovieService.GetMoviesAsync());
+    public async Task<ActionResult<PagedResponse<MovieDto>>> GetMovies([FromQuery] PagingOptions pagingOptions) => Ok(await serviceManager.MovieService.GetMoviesAsync(pagingOptions));
 
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<MovieDto>> GetMovie(Guid id) => Ok(await serviceManager.MovieService.GetMovieAsync(id));

@@ -6,9 +6,13 @@ namespace Movies.Services;
 
 public class ActorService(ITransactionManager transactionManager, IMapper mapper) : IActorService
 {
-    public async Task<IEnumerable<ActorDto>> GetActorsAsync(bool trackChanges = false)
+    public async Task<PagedResponse<ActorDto>> GetActorsAsync(PagingOptions pagingOptions, bool trackChanges = false)
     {
-        return mapper.Map<IEnumerable<ActorDto>>(await transactionManager.ActorRepository.GetActorsAsync(trackChanges));
+        var (items, totalItems) = await transactionManager.ActorRepository.GetActorsAsync(pagingOptions, trackChanges);
+        return new PagedResponse<ActorDto>(
+            mapper.Map<IEnumerable<ActorDto>>(items),
+            new PagingMeta(totalItems, pagingOptions.Page, pagingOptions.Size)
+        );
     }
 
     public async Task<ActorDetailsDto> GetActorAsync(Guid id, bool trackChanges = false)
@@ -24,8 +28,14 @@ public class ActorService(ITransactionManager transactionManager, IMapper mapper
         return mapper.Map<ActorDetailsDto>(actor);
     }
 
-    public async Task<IEnumerable<ActorDto>> GetMostActiveActorsAsync(bool trackChanges = false)
+    public async Task<PagedResponse<ActorDto>> GetMostActiveActorsAsync(PagingOptions pagingOptions, bool trackChanges = false)
     {
-        return mapper.Map<IEnumerable<ActorDto>>(await transactionManager.ActorRepository.GetMostActiveActorsAsync());
+        var (items, totalItems) = await transactionManager.ActorRepository.GetMostActiveActorsAsync(pagingOptions, trackChanges);
+        return new PagedResponse<ActorDto>(
+            mapper.Map<IEnumerable<ActorDto>>(items),
+            new PagingMeta(totalItems, pagingOptions.Page, pagingOptions.Size)
+        );
+
+        //return mapper.Map<IEnumerable<ActorDto>>();
     }
 }
