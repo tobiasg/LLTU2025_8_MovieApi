@@ -1,11 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Movies.Core;
 using Movies.Core.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Movies.Data.Repositories;
 
@@ -26,22 +21,30 @@ public class ActorRepository(ApplicationContext context) : BaseRepository<Actor>
 
     public async Task<Actor> AddActorToMovie(Guid movieId, Guid actorId, bool trackChanges = false)
     {
-        var movie = await context.Movies.Include(m => m.Actors).FirstOrDefaultAsync(m => m.Id == movieId);
-
-        if (movie == null) throw new ArgumentException($"Movie not found");
+        var movie = await context.Movies
+            .Include(m => m.Actors)
+            .FirstOrDefaultAsync(m => m.Id == movieId) ?? throw new ArgumentException($"Movie not found");
 
         var actor = await FindByCondition(actor => actor.Id == actorId, trackChanges)
             .Include(a => a.Movies).ThenInclude(m => m.Genres)
             .Include(a => a.Movies).ThenInclude(m => m.Reviews)
-            .FirstOrDefaultAsync();
+            .FirstOrDefaultAsync() ?? throw new ArgumentException($"Actor not found");
 
-        if (actor == null) throw new ArgumentException($"Actor not found");
-
-        if (movie.Actors.Any(a => a.Id == actorId))
-        { 
+        if (!movie.Actors.Any(a => a.Id == actorId))
+        {
             movie.Actors.Add(actor);
         }
 
         return actor;
+    }
+
+    public async Task<List<Actor>> GetMostActiveActorsAsync(bool trackChanges = false)
+    {
+        return await context.Movies
+            .SelectMany(movie => movie.Actors)
+            .GroupBy(actor => actor.Id)
+            .OrderByDescending(group => group.Count())
+            .Take(10).Select(group => group.First())
+            .ToListAsync();
     }
 }

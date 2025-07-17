@@ -28,4 +28,15 @@ public class MovieRepository(ApplicationContext context) : BaseRepository<Movie>
             .Include(movie => movie.Actors)
             .FirstOrDefaultAsync();
     }
+
+    public async Task<Movie?> GetTopRatedMovieAsync(bool trackChanges = false)
+    {
+        return await FindByCondition(movie => movie.Reviews.Any(), trackChanges)
+             .Include(movie => movie.Details)
+            .Include(movie => movie.Genres)
+            .Include(movie => movie.Reviews)
+            .Include(movie => movie.Actors)
+            .OrderByDescending(movie => movie.Reviews.Select(review => review.Rating).Average())
+            .FirstOrDefaultAsync();
+    }
 }

@@ -11,4 +11,5 @@ public interface IMovieRepository : IRepositoryBase<Movie>
 {
     Task<List<Movie>> GetMoviesAsync(bool trackChanges = false);
     Task<Movie?> GetMovieAsync(Guid id, bool trackChanges = false);
+    Task<Movie?> GetTopRatedMovieAsync(bool trackChanges = false);
 }

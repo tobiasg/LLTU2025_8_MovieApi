@@ -23,4 +23,9 @@ public class ActorService(ITransactionManager transactionManager, IMapper mapper
         await transactionManager.CompleteAsync();
         return mapper.Map<ActorDetailsDto>(actor);
     }
+
+    public async Task<IEnumerable<ActorDto>> GetMostActiveActorsAsync(bool trackChanges = false)
+    {
+        return mapper.Map<IEnumerable<ActorDto>>(await transactionManager.ActorRepository.GetMostActiveActorsAsync());
+    }
 }

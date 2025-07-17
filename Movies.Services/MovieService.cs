@@ -24,6 +24,12 @@ public class MovieService(ITransactionManager transactionManager, IMapper mapper
         return movie == null ? null! : mapper.Map<MovieDetailsDto>(movie);
     }
 
+    public async Task<MovieDetailsDto> GetTopRatedMovieAsync(bool trackChanges = false)
+    {
+        var movie = await transactionManager.MovieRepository.GetTopRatedMovieAsync();
+        return movie == null ? null! : mapper.Map<MovieDetailsDto>(movie);
+    }
+
     public async Task<MovieDto> CreateMovieAsync(CreateMovieDto createMovieDto)
     {
         var movie = mapper.Map<Movie>(createMovieDto);
