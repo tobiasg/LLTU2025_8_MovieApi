@@ -18,9 +18,11 @@ public static class ServiceExtensions
         services.AddScoped<IMovieRepository, MovieRepository>();
         services.AddScoped<IReviewRepository, ReviewRepository>();
         services.AddScoped<IActorRepository, ActorRepository>();
+        services.AddScoped<IGenreRepository, GenreRepository>();
         services.AddScoped(provider => new Lazy<IMovieRepository>(provider.GetRequiredService<IMovieRepository>));
         services.AddScoped(provider => new Lazy<IReviewRepository>(provider.GetRequiredService<IReviewRepository>));
         services.AddScoped(provider => new Lazy<IActorRepository>(provider.GetRequiredService<IActorRepository>));
+        services.AddScoped(provider => new Lazy<IGenreRepository>(provider.GetRequiredService<IGenreRepository>));
     }
 
     public static void AddServices(this IServiceCollection services)
@@ -30,9 +32,11 @@ public static class ServiceExtensions
         services.AddScoped<IMovieService, MovieService>();
         services.AddScoped<IReviewService, ReviewService>();
         services.AddScoped<IActorService, ActorService>();
+        services.AddScoped<IGenreService, GenreService>();
         services.AddScoped(provider => new Lazy<IMovieService>(provider.GetRequiredService<IMovieService>));
         services.AddScoped(provider => new Lazy<IReviewService>(provider.GetRequiredService<IReviewService>));
         services.AddScoped(provider => new Lazy<IActorService>(provider.GetRequiredService<IActorService>));
+        services.AddScoped(provider => new Lazy<IGenreService>(provider.GetRequiredService<IGenreService>));
 
     }
 }

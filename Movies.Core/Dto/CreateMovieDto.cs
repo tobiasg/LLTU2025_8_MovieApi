@@ -9,5 +9,13 @@ namespace Movies.Core.Dto;
 public record CreateMovieDto(
     string Title,
     int Year,
-    int Duration
+    int Duration,
+    List<Guid> Genres,
+    CreateMovieDetailsDto? Details
+);
+
+public record CreateMovieDetailsDto(
+    string Synopsis,
+    string Language,
+    decimal Budget
 );

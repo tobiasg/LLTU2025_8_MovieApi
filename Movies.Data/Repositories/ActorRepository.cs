@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Movies.Core;
 using Movies.Core.Entities;
+using Movies.Core.Exceptions;
 
 namespace Movies.Data.Repositories;
 
@@ -28,12 +29,20 @@ public class ActorRepository(ApplicationContext context) : BaseRepository<Actor>
     {
         var movie = await context.Movies
             .Include(m => m.Actors)
-            .FirstOrDefaultAsync(m => m.Id == movieId) ?? throw new ArgumentException($"Movie not found");
+            .Include(m => m.Genres)
+            .FirstOrDefaultAsync(m => m.Id == movieId) ?? throw new ValidationException("Movie not found");
 
-        var actor = await FindByCondition(actor => actor.Id == actorId, trackChanges)
-            .Include(a => a.Movies).ThenInclude(m => m.Genres)
-            .Include(a => a.Movies).ThenInclude(m => m.Reviews)
-            .FirstOrDefaultAsync() ?? throw new ArgumentException($"Actor not found");
+        if (!await context.Actors.AnyAsync(a => a.Id == actorId)) throw new ValidationException("Actor not found");
+
+        var actorsCount = movie.Actors.Count;
+        var actorsLimitForDocumentaries = 10;
+
+        if (movie.Genres.Any(g => g.Name.Equals("Documentary", StringComparison.OrdinalIgnoreCase)))
+        {
+            if (actorsCount >= actorsLimitForDocumentaries) throw new ValidationException($"Documentary movies cannot have more than {actorsLimitForDocumentaries} actors");
+        }
+
+        var actor = await context.Actors.FirstOrDefaultAsync(a => a.Id == actorId) ?? throw new ValidationException("Actor not found");
 
         if (!movie.Actors.Any(a => a.Id == actorId))
         {

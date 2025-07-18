@@ -30,6 +30,11 @@ public class MovieRepository(ApplicationContext context) : BaseRepository<Movie>
             .Include(movie => movie.Actors)
             .FirstOrDefaultAsync();
     }
+    
+    public async Task<Movie?> GetMovieByTitleAsync(string title, bool trackChanges = false)
+    {
+        return await FindByCondition(movie => movie.Title.Equals(title), trackChanges).FirstOrDefaultAsync();
+    }
 
     public async Task<Movie?> GetTopRatedMovieAsync(bool trackChanges = false)
     {

@@ -2,6 +2,7 @@
 using Movies.Core;
 using Movies.Core.Dto;
 using Movies.Core.Entities;
+using Movies.Core.Exceptions;
 
 namespace Movies.Services;
 
@@ -18,6 +19,8 @@ public class ReviewService(ITransactionManager transactionManager, IMapper mappe
 
     public async Task<ReviewDto> CreateReviewAsync(Guid movieId, CreateReviewDto createReviewDto)
     {
+        await ValidateCreateAsync(movieId, createReviewDto);
+
         var review = mapper.Map<Review>(createReviewDto);
         review.MovieId = movieId;
 
@@ -43,5 +46,17 @@ public class ReviewService(ITransactionManager transactionManager, IMapper mappe
             transactionManager.ReviewRepository.Delete(review);
             await transactionManager.CompleteAsync();
         }
+    }
+
+    private async Task ValidateCreateAsync(Guid movieId, CreateReviewDto createReviewDto)
+    {
+        var movie = await transactionManager.MovieRepository.GetMovieAsync(movieId, trackChanges: false);
+        if (movie == null) throw new MovieNotFoundException(movieId);
+
+        var reviewsCount = movie.Reviews?.Count ?? 0;
+        var movieAge = DateTime.Now.Year - movie.Year;
+
+        if (reviewsCount >= 10) throw new ValidationException("Movie cannot have more than 10 reviews");
+        if (movieAge >= 20 && reviewsCount >= 5) throw new ValidationException("Movies older than 20 years cannot have more than 5 reviews");
     }
 }

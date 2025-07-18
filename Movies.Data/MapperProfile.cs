@@ -35,7 +35,14 @@ public class MapperProfile : Profile
         CreateMap<Actor, ActorDetailsDto>();
         CreateMap<ActorDetailsDto, Actor>();
 
-        CreateMap<CreateMovieDto, Movie>();
+        CreateMap<CreateMovieDto, Movie>()
+            .ForMember(dest => dest.Details, opt => opt.Ignore())
+            .ForMember(dest => dest.Genres, opt => opt.Ignore())
+            .ForMember(dest => dest.Reviews, opt => opt.Ignore())
+            .ForMember(dest => dest.Actors, opt => opt.Ignore());
+
+        CreateMap<CreateMovieDetailsDto, MovieDetails>();
+
         CreateMap<UpdateMovieDto, Movie>();
 
         CreateMap<CreateReviewDto, Review>();
