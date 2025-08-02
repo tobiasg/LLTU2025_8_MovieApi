@@ -47,5 +47,9 @@ public class MapperProfile : Profile
 
         CreateMap<CreateReviewDto, Review>();
         CreateMap<UpdateReviewDto, Review>();
+        CreateMap<UpdateMovieDetailsDto, Movie>().ReverseMap();
+
+        CreateMap<UpdateMovieDetailsDto, MovieDetails>();
+        CreateMap<MovieDetails, UpdateMovieDetailsDto>();
     }
 }

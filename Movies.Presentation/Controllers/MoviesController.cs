@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.AspNetCore.Mvc;
 using Movies.Core;
 using Movies.Core.Dto;
 
@@ -33,7 +34,15 @@ public class MoviesController(IServiceManager serviceManager) : ControllerBase
         return NoContent(); 
     }
 
-    [HttpDelete("/movies/{id}")]
+    [HttpPatch("{id:guid}")]
+    public async Task<IActionResult> PatchMovie(Guid id, [FromBody] JsonPatchDocument<UpdateMovieDetailsDto> patchDocument)
+    {
+        if (patchDocument == null) return BadRequest();
+        await serviceManager.MovieService.UpdateMovieDetailsAsync(id, patchDocument);
+        return NoContent();
+    }
+
+    [HttpDelete("{id:guid}")]
     public async Task<ActionResult> DeleteMovie(Guid id)
     {
         await serviceManager.MovieService.DeleteMovieAsync(id);

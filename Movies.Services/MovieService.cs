@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.VisualBasic;
 using Movies.Core;
 using Movies.Core.Dto;
 using Movies.Core.Entities;
@@ -63,6 +65,21 @@ public class MovieService(ITransactionManager transactionManager, IMapper mapper
         await transactionManager.CompleteAsync();
     }
 
+    public async Task UpdateMovieDetailsAsync(Guid id, JsonPatchDocument<UpdateMovieDetailsDto> patchDocument)
+    {
+        var movie = await transactionManager.MovieRepository.GetMovieAsync(id, trackChanges: true);
+        if (movie == null) throw new MovieNotFoundException(id);
+
+        var dto = mapper.Map<UpdateMovieDetailsDto>(movie);
+        patchDocument.ApplyTo(dto);
+
+        mapper.Map(dto, movie);
+        movie.Details ??= new MovieDetails { MovieId = movie.Id };
+        mapper.Map(dto, movie.Details);
+
+        await transactionManager.CompleteAsync();
+    }
+
     public async Task DeleteMovieAsync(Guid id)
     {
         var movie = await transactionManager.MovieRepository.GetMovieAsync(id);
@@ -75,7 +92,7 @@ public class MovieService(ITransactionManager transactionManager, IMapper mapper
     private async Task ValidateCreateAsync(CreateMovieDto createMovieDto)
     {
         var movie = await transactionManager.MovieRepository.GetMovieByTitleAsync(createMovieDto.Title, trackChanges: false);
-        if (movie != null) throw new ValidationException("Movie alredy exists");
+        if (movie != null) throw new ValidationException("Movie already exists");
 
         if (createMovieDto.Duration < 0) throw new ValidationException("Duration can not be negative");
 
